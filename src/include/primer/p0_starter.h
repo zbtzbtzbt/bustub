@@ -134,19 +134,16 @@ public:
     
     
     /**
-     * TODO(P0): Add implementation [Done]
      * @return The number of rows in the matrix
      */
     int GetRowCount() const override { return Matrix<T>::rows_; }
     
     /**
-     * TODO(P0): Add implementation [Done]
      * @return The number of columns in the matrix
      */
     int GetColumnCount() const override { return Matrix<T>::cols_; }
     
     /**
-     * TODO(P0): Add implementation [Done]
      *
      * Get the (i,j)th matrix element.
      *
@@ -158,12 +155,13 @@ public:
      * @throws OUT_OF_RANGE if either index is out of range
      */
     T GetElement(int i, int j) const override {
-        if (i < 0 || i > Matrix<T>::rows_ || j < 0 || j > Matrix<T>::cols_) {
-            //throw NotImplementedException{"RowMatrix::GetElement(i,j) not implemented."};
+        if (i < 0 || i >= Matrix<T>::rows_ || j < 0 || j >= Matrix<T>::cols_) {
+            throw Exception(ExceptionType::OUT_OF_RANGE,"get element out of range");
             //LOG_INFO("GetElement(%d, %d) out of range!",i,j);
             T* tmp = new T;
             return *tmp;
         }
+        
         return Matrix<T>::matrix_[i][j];
     }
     
@@ -178,8 +176,8 @@ public:
      * @throws OUT_OF_RANGE if either index is out of range
      */
     void SetElement(int i, int j, T val) override {
-        if (i < 0 || i > Matrix<T>::rows_ || j < 0 || j > Matrix<T>::cols_) {
-            //throw NotImplementedException{"RowMatrix::GetElement(i,j) not implemented."};
+        if (i < 0 || i >= Matrix<T>::rows_ || j < 0 || j >= Matrix<T>::cols_) {
+            throw Exception(ExceptionType::OUT_OF_RANGE,"set element out of range");
             //LOG_INFO("SetElement(%d, %d) out of range!",i,j);
             return ;
         }
@@ -188,7 +186,6 @@ public:
     }
     
     /**
-     * TODO(P0): Add implementation
      *
      * Fill the elements of the matrix from `source`.
      *
@@ -199,7 +196,23 @@ public:
      * @throws OUT_OF_RANGE if `source` is incorrect size
      */
     void FillFrom(const std::vector <T>& source) override {
-        throw NotImplementedException{"RowMatrix::FillFrom() not implemented."};
+        int cols = Matrix<T>::cols_;
+        int rows = Matrix<T>::rows_;
+        
+        size_t size = cols * rows;
+        
+        if (source.size() != size) {
+            throw Exception(ExceptionType::OUT_OF_RANGE, "FillFrom size mismatch");
+        }
+        
+        for (int i = 0; i < cols; i++) {
+            for (int j = 0; j < rows; j++) {
+                Matrix<T>::matrix_[i][j]=source[i*cols+j];
+            }
+        }
+        
+        
+        return ;
     }
     
     /**
@@ -236,7 +249,6 @@ public:
      * @return The result of matrix addition
      */
     static std::unique_ptr <RowMatrix<T>> Add(const RowMatrix<T>* matrixA, const RowMatrix<T>* matrixB) {
-        // TODO(P0): Add implementation
         
         if (matrixA->GetColumnCount() != matrixB->GetColumnCount() ||
             matrixA->GetRowCount() != matrixB->GetRowCount()) {
