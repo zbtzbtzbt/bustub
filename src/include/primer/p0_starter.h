@@ -205,8 +205,8 @@ public:
             throw Exception(ExceptionType::OUT_OF_RANGE, "FillFrom size mismatch");
         }
         
-        for (int i = 0; i < cols; i++) {
-            for (int j = 0; j < rows; j++) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
                 Matrix<T>::matrix_[i][j]=source[i*cols+j];
             }
         }
@@ -252,8 +252,7 @@ public:
         
         if (matrixA->GetColumnCount() != matrixB->GetColumnCount() ||
             matrixA->GetRowCount() != matrixB->GetRowCount()) {
-            //LOG_INFO("Add size mismatch",i,j);
-            return std::unique_ptr<RowMatrix<T>>(nullptr);
+            throw Exception(ExceptionType::MISMATCH_TYPE,"Add size mismatch");
         }
         const int rows = matrixA->GetRowCount();
         const int cols = matrixA->GetColumnCount();
@@ -277,11 +276,26 @@ public:
      * @return The result of matrix multiplication
      */
     static std::unique_ptr <RowMatrix<T>> Multiply(const RowMatrix<T>* matrixA, const RowMatrix<T>* matrixB) {
-        // TODO(P0): Add implementation
-        const int c_rows_ = matrixA->GetColumnCount();
-        const int c_cols = matrixB->GetRowCount();
+        if (matrixA->GetColumnCount() != matrixB->GetRowCount()) {
+            throw Exception(ExceptionType::MISMATCH_TYPE,"Add size mismatch");
+        }
         
-        RowMatrix<T>* matrixC = new RowMatrix<T>(c_rows_,c_cols);
+        const int a_rows_ = matrixA->GetRowCount();
+        const int b_cols = matrixB->GetColumnCount();
+        const int a_cols = matrixA->GetColumnCount();
+        
+        RowMatrix<T>* matrixC = new RowMatrix<T>(a_rows_,b_cols);
+        
+        for (int i = 0; i < a_rows_; i++) {
+            for (int j = 0; j < b_cols; j++) {
+                auto sum = 0 ;
+                for (int k = 0; k < a_cols; k++) {
+                    sum += matrixA->GetElement(i, k) * matrixB->GetElement(k, j);
+                }
+                matrixC->SetElement(i,j,sum);
+            }
+        }
+        
         return std::unique_ptr<RowMatrix<T>>(matrixC);
     }
     
@@ -295,7 +309,6 @@ public:
      */
     static std::unique_ptr <RowMatrix<T>> GEMM(const RowMatrix<T>* matrixA, const RowMatrix<T>* matrixB,
                                                const RowMatrix<T>* matrixC) {
-        // TODO(P0): Add implementation
         RowMatrix<T>* matrixD =Add(Multiply(matrixA,matrixB),matrixC);
         return std::unique_ptr<RowMatrix<T>>(matrixD);
     }
