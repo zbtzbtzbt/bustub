@@ -16,12 +16,11 @@ open `starter_test.cpp` , you can see four test , and you can test independently
 
 ### 2.2 all of test cases
 
-> enter ./build
->
-> pwd /xxx/bustub/build
->
-> make check-tests
-
+`````
+enter ./build
+pwd /xxx/bustub/build
+make check-tests
+`````
 `````
 20: key info32
 20: [       OK ] TypeTests.TemplateTest (0 ms)
@@ -38,3 +37,21 @@ Total Test time (real) =   1.70 sec
 `````
 
  you will see your grades.
+
+## 3. code format
+`````
+enter ./build
+pwd /xxx/bustub/build
+
+make format
+make check-lint
+make check-clang-tidy
+`````
+
+it will show your mismatched code-style, such as:
+`````
+35: error: invalid case style for variable 'matrixRes_up' [readability-identifier-naming,-warnings-as-errors]
+std::unique_ptr<RowMatrix<T>> matrixRes_up(new RowMatrix<T>(rows, cols));
+^~~~~~~~~~~~
+matrix_res_up
+`````
