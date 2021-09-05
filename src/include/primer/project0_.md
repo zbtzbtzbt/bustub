@@ -16,7 +16,7 @@ open `starter_test.cpp` , you can see four test , and you can test independently
 
 ### 2.2 all of test cases
 
-> #enter ./build
+> enter ./build
 >
 > pwd /xxx/bustub/build
 >

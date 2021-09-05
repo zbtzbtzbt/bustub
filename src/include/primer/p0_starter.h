@@ -104,7 +104,6 @@ protected:
     
     /**
      * Destroy a matrix instance.
-     * TODO(P0): Add implementation
      */
     virtual ~Matrix() = default;
 };
@@ -257,15 +256,15 @@ public:
         const int rows = matrixA->GetRowCount();
         const int cols = matrixA->GetColumnCount();
     
-        RowMatrix<T>* matrixC = new RowMatrix<T>(rows,cols);
+        std::unique_ptr<RowMatrix<T>> matrixRes_up(new RowMatrix<T>(rows,cols));
     
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                matrixC->SetElement(i, j,matrixA->GetElement(i, j) + matrixB->GetElement(i, j));
+                matrixRes_up->SetElement(i, j,matrixA->GetElement(i, j) + matrixB->GetElement(i, j));
             }
         }
         
-        return std::unique_ptr<RowMatrix<T>>(matrixC);
+        return matrixRes_up;
     }
     
     /**
@@ -283,8 +282,8 @@ public:
         const int a_rows_ = matrixA->GetRowCount();
         const int b_cols = matrixB->GetColumnCount();
         const int a_cols = matrixA->GetColumnCount();
-        
-        RowMatrix<T>* matrixC = new RowMatrix<T>(a_rows_,b_cols);
+  
+        std::unique_ptr<RowMatrix<T>> matrixRes_up(new RowMatrix<T>(a_rows_,b_cols));
         
         for (int i = 0; i < a_rows_; i++) {
             for (int j = 0; j < b_cols; j++) {
@@ -292,11 +291,11 @@ public:
                 for (int k = 0; k < a_cols; k++) {
                     sum += matrixA->GetElement(i, k) * matrixB->GetElement(k, j);
                 }
-                matrixC->SetElement(i,j,sum);
+                matrixRes_up->SetElement(i,j,sum);
             }
         }
         
-        return std::unique_ptr<RowMatrix<T>>(matrixC);
+        return matrixRes_up;
     }
     
     /**
@@ -309,8 +308,8 @@ public:
      */
     static std::unique_ptr <RowMatrix<T>> GEMM(const RowMatrix<T>* matrixA, const RowMatrix<T>* matrixB,
                                                const RowMatrix<T>* matrixC) {
-        RowMatrix<T>* matrixD =Add(Multiply(matrixA,matrixB),matrixC);
-        return std::unique_ptr<RowMatrix<T>>(matrixD);
+        std::unique_ptr<RowMatrix<T>> matrixRes_up(Add(Multiply(matrixA,matrixB),matrixC));
+        return matrixRes_up;
     }
 };
 }  // namespace bustub
